@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Tycoon</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18212f;
+      --muted: #637083;
+      --line: #d9e1ea;
+      --panel: #ffffff;
+      --soft: #f5f8fb;
+      --accent: #0f766e;
+      --accent-dark: #0b5f59;
+      --warn: #b45309;
+      --danger: #b42318;
+      --success: #157347;
+      --shadow: 0 12px 28px rgba(27, 39, 54, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(15, 118, 110, 0.12), transparent 340px),
+        #eef3f7;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      border-radius: 7px;
+      padding: 0.7rem 0.95rem;
+      cursor: pointer;
+      color: #fff;
+      background: var(--accent);
+      font-weight: 700;
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--accent-dark);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 0.65rem 0.75rem;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    label {
+      display: grid;
+      gap: 0.35rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 650;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 20px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 0.55rem;
+      max-width: 680px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.75fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 14px;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--soft);
+      min-height: 86px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 0.45rem;
+      font-size: 1.55rem;
+      line-height: 1.05;
+    }
+
+    .catalogue {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .product {
+      display: grid;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .product-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      border-radius: 999px;
+      padding: 0.3rem 0.55rem;
+      color: #084843;
+      background: #d9f4ef;
+      font-weight: 800;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .facts strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.05rem;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .price-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    .rules {
+      display: grid;
+      gap: 8px;
+      border-left: 4px solid var(--accent);
+      padding: 10px 12px;
+      background: #eefaf7;
+      border-radius: 6px;
+      color: #24403c;
+      font-size: 0.94rem;
+    }
+
+    .message {
+      min-height: 24px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .message.error {
+      color: var(--danger);
+    }
+
+    .message.ok {
+      color: var(--success);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.94rem;
+    }
+
+    th,
+    td {
+      padding: 0.72rem 0.55rem;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      vertical-align: top;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+    }
+
+    thead th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: var(--soft);
+    }
+
+    tfoot td {
+      font-weight: 800;
+      border-bottom: 0;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .history-day {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .history-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 11px 12px;
+      background: var(--soft);
+      font-weight: 800;
+    }
+
+    .final-result {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+    }
+
+    .gain {
+      color: var(--success);
+    }
+
+    .loss {
+      color: var(--danger);
+    }
+
+    @media (max-width: 940px) {
+      .layout,
+      header {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+
+      .catalogue,
+      .status-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      main {
+        width: min(100% - 20px, 1180px);
+        padding-top: 18px;
+      }
+
+      .catalogue,
+      .status-grid,
+      .price-row {
+        grid-template-columns: 1fr;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Campus Tycoon</h1>
+        <p class="subtitle">Run a five-day campus coffee cart. Buy stock, set prices, open for trade, and watch cash and inventory move together.</p>
+      </div>
+      <button id="newRunButton" type="button">New run</button>
+    </header>
+
+    <section class="layout">
+      <div class="stack">
+        <section class="panel" aria-labelledby="statusTitle">
+          <div class="panel-header">
+            <h2 id="statusTitle">Run status</h2>
+            <p id="runMessage" class="message" aria-live="polite"></p>
+          </div>
+          <div class="status-grid">
+            <div class="metric">
+              <span>Day</span>
+              <strong id="dayMetric">1 of 5</strong>
+            </div>
+            <div class="metric">
+              <span>Cash</span>
+              <strong id="cashMetric">€100.00</strong>
+            </div>
+            <div class="metric">
+              <span>Stock units</span>
+              <strong id="stockMetric">0</strong>
+            </div>
+            <div class="metric">
+              <span>Progress</span>
+              <strong id="progressMetric">0/5</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="catalogueTitle">
+          <div class="panel-header">
+            <h2 id="catalogueTitle">Catalogue and stock</h2>
+          </div>
+          <div id="catalogue" class="catalogue"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="pricesTitle">
+          <div class="panel-header">
+            <h2 id="pricesTitle">Prices</h2>
+          </div>
+          <div class="rules">
+            <strong>Demand rule</strong>
+            <span>Price at or below reference: 10 units. Above reference and up to twice reference: 5 units. Above twice reference: 0 units.</span>
+          </div>
+          <form id="priceForm" class="price-row" style="margin-top: 14px;"></form>
+          <p id="priceMessage" class="message" aria-live="polite"></p>
+        </section>
+
+        <section class="panel" aria-labelledby="tradeTitle">
+          <div class="panel-header">
+            <h2 id="tradeTitle">Trade one day</h2>
+            <button id="tradeButton" type="button">Open for day</button>
+          </div>
+          <div id="preview"></div>
+        </section>
+      </div>
+
+      <aside class="stack">
+        <section class="panel" aria-labelledby="historyTitle">
+          <div class="panel-header">
+            <h2 id="historyTitle">Completed days</h2>
+          </div>
+          <div id="history" class="history-list"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="finalTitle">
+          <div class="panel-header">
+            <h2 id="finalTitle">Final result</h2>
+          </div>
+          <div id="finalResult"></div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "campus-tycoon-run-v1";
+    const INITIAL_CASH = 100;
+    const MAX_DAYS = 5;
+
+    const catalogue = [
+      { id: "espresso", name: "Study Espresso", unitCost: 1.20, referencePrice: 2.40 },
+      { id: "wrap", name: "Lecture Wrap", unitCost: 2.00, referencePrice: 4.00 },
+      { id: "muffin", name: "Library Muffin", unitCost: 1.50, referencePrice: 3.00 }
+    ];
+
+    let run = loadRun();
+
+    const elements = {
+      dayMetric: document.querySelector("#dayMetric"),
+      cashMetric: document.querySelector("#cashMetric"),
+      stockMetric: document.querySelector("#stockMetric"),
+      progressMetric: document.querySelector("#progressMetric"),
+      runMessage: document.querySelector("#runMessage"),
+      catalogue: document.querySelector("#catalogue"),
+      priceForm: document.querySelector("#priceForm"),
+      priceMessage: document.querySelector("#priceMessage"),
+      preview: document.querySelector("#preview"),
+      tradeButton: document.querySelector("#tradeButton"),
+      history: document.querySelector("#history"),
+      finalResult: document.querySelector("#finalResult"),
+      newRunButton: document.querySelector("#newRunButton")
+    };
+
+    function newRun() {
+      return {
+        cash: INITIAL_CASH,
+        stock: Object.fromEntries(catalogue.map((product) => [product.id, 0])),
+        prices: Object.fromEntries(catalogue.map((product) => [product.id, product.referencePrice])),
+        currentDay: 1,
+        history: []
+      };
+    }
+
+    function loadRun() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return newRun();
+
+      try {
+        const parsed = JSON.parse(saved);
+        return normalizeRun(parsed);
+      } catch {
+        return newRun();
+      }
+    }
+
+    function normalizeRun(saved) {
+      const fresh = newRun();
+      const history = Array.isArray(saved.history) ? saved.history.slice(0, MAX_DAYS) : [];
+      return {
+        cash: toCentsNumber(saved.cash ?? fresh.cash),
+        stock: Object.fromEntries(catalogue.map((product) => [
+          product.id,
+          Math.max(0, Math.floor(Number(saved.stock?.[product.id] ?? 0)))
+        ])),
+        prices: Object.fromEntries(catalogue.map((product) => [
+          product.id,
+          positiveMoney(saved.prices?.[product.id]) ? toCentsNumber(saved.prices[product.id]) : product.referencePrice
+        ])),
+        currentDay: Math.min(MAX_DAYS + 1, Math.max(1, Math.floor(Number(saved.currentDay ?? history.length + 1)))),
+        history
+      };
+    }
+
+    function saveRun() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(run));
+    }
+
+    function money(value) {
+      return new Intl.NumberFormat("en-IE", {
+        style: "currency",
+        currency: "EUR",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(toCentsNumber(value));
+    }
+
+    function toCentsNumber(value) {
+      return Math.round(Number(value) * 100) / 100;
+    }
+
+    function positiveMoney(value) {
+      const number = Number(value);
+      return Number.isFinite(number) && number > 0;
+    }
+
+    function isComplete() {
+      return run.history.length >= MAX_DAYS || run.currentDay > MAX_DAYS;
+    }
+
+    function demandFor(product, price) {
+      if (price <= product.referencePrice) return 10;
+      if (price <= product.referencePrice * 2) return 5;
+      return 0;
+    }
+
+    function productById(id) {
+      return catalogue.find((product) => product.id === id);
+    }
+
+    function showMessage(target, text, type = "") {
+      target.textContent = text;
+      target.className = `message ${type}`.trim();
+    }
+
+    function render() {
+      const totalStock = catalogue.reduce((sum, product) => sum + run.stock[product.id], 0);
+      elements.dayMetric.textContent = isComplete() ? "Complete" : `${run.currentDay} of ${MAX_DAYS}`;
+      elements.cashMetric.textContent = money(run.cash);
+      elements.stockMetric.textContent = String(totalStock);
+      elements.progressMetric.textContent = `${run.history.length}/${MAX_DAYS}`;
+
+      renderCatalogue();
+      renderPrices();
+      renderPreview();
+      renderHistory();
+      renderFinalResult();
+
+      elements.tradeButton.disabled = isComplete();
+    }
+
+    function renderCatalogue() {
+      elements.catalogue.innerHTML = "";
+      for (const product of catalogue) {
+        const card = document.createElement("article");
+        card.className = "product";
+        card.innerHTML = `
+          <div class="product-top">
+            <div>
+              <h3>${product.name}</h3>
+              <p class="subtitle">Cost ${money(product.unitCost)} · reference ${money(product.referencePrice)}</p>
+            </div>
+            <span class="tag">${run.stock[product.id]} in stock</span>
+          </div>
+          <div class="facts">
+            <div>Current price<strong>${money(run.prices[product.id])}</strong></div>
+            <div>Today demand<strong>${demandFor(product, run.prices[product.id])} units</strong></div>
+          </div>
+          <form class="row" data-buy="${product.id}">
+            <label>
+              Quantity to buy
+              <input type="number" min="1" step="1" inputmode="numeric" ${isComplete() ? "disabled" : ""}>
+            </label>
+            <button type="submit" ${isComplete() ? "disabled" : ""}>Buy</button>
+          </form>
+        `;
+        elements.catalogue.appendChild(card);
+      }
+    }
+
+    function renderPrices() {
+      elements.priceForm.innerHTML = "";
+      for (const product of catalogue) {
+        const label = document.createElement("label");
+        label.textContent = product.name;
+        const input = document.createElement("input");
+        input.type = "number";
+        input.min = "0.01";
+        input.step = "0.01";
+        input.value = run.prices[product.id].toFixed(2);
+        input.dataset.price = product.id;
+        input.disabled = isComplete();
+        label.append(input);
+        elements.priceForm.append(label);
+      }
+    }
+
+    function renderPreview() {
+      const rows = catalogue.map((product) => {
+        const price = run.prices[product.id];
+        const demand = demandFor(product, price);
+        const sold = Math.min(demand, run.stock[product.id]);
+        const revenue = toCentsNumber(sold * price);
+        const cost = toCentsNumber(sold * product.unitCost);
+        const profit = toCentsNumber(revenue - cost);
+        return { product, price, demand, sold, revenue, cost, profit };
+      });
+      elements.preview.innerHTML = resultTable(rows, "Projected if you open now");
+    }
+
+    function resultTable(rows, caption) {
+      const totals = rows.reduce((sum, row) => ({
+        sold: sum.sold + row.sold,
+        revenue: toCentsNumber(sum.revenue + row.revenue),
+        cost: toCentsNumber(sum.cost + row.cost),
+        profit: toCentsNumber(sum.profit + row.profit)
+      }), { sold: 0, revenue: 0, cost: 0, profit: 0 });
+
+      return `
+        <table>
+          <caption style="text-align:left; padding: 0 0 0.7rem; color: var(--muted); font-weight: 700;">${caption}</caption>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Demand</th>
+              <th>Sold</th>
+              <th>Revenue</th>
+              <th>COGS</th>
+              <th>Gross profit</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((row) => `
+              <tr>
+                <td>${row.product.name}</td>
+                <td>${row.demand}</td>
+                <td>${row.sold}</td>
+                <td>${money(row.revenue)}</td>
+                <td>${money(row.cost)}</td>
+                <td>${money(row.profit)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total</td>
+              <td></td>
+              <td>${totals.sold}</td>
+              <td>${money(totals.revenue)}</td>
+              <td>${money(totals.cost)}</td>
+              <td>${money(totals.profit)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      `;
+    }
+
+    function renderHistory() {
+      elements.history.innerHTML = "";
+      if (run.history.length === 0) {
+        elements.history.innerHTML = `<p class="subtitle">No trading days completed yet.</p>`;
+        return;
+      }
+
+      for (const day of run.history) {
+        const article = document.createElement("article");
+        article.className = "history-day";
+        article.innerHTML = `
+          <div class="history-title">
+            <span>Day ${day.day}</span>
+            <span>Cash after: ${money(day.cashAfter)}</span>
+          </div>
+          <div style="padding: 12px;">${resultTable(day.rows, "Recorded result")}</div>
+        `;
+        elements.history.append(article);
+      }
+    }
+
+    function renderFinalResult() {
+      if (!isComplete()) {
+        elements.finalResult.innerHTML = `<p class="subtitle">Complete five trading days to see the final result.</p>`;
+        return;
+      }
+
+      const stockValue = catalogue.reduce((sum, product) => (
+        toCentsNumber(sum + run.stock[product.id] * product.unitCost)
+      ), 0);
+      const totalValue = toCentsNumber(run.cash + stockValue);
+      const gain = toCentsNumber(totalValue - INITIAL_CASH);
+      const gainClass = gain >= 0 ? "gain" : "loss";
+
+      elements.finalResult.innerHTML = `
+        <div class="final-result">
+          <p>Final cash: <strong>${money(run.cash)}</strong></p>
+          <p>Remaining stock at purchase cost: <strong>${money(stockValue)}</strong></p>
+          <p>Overall gain/loss: <strong class="${gainClass}">${money(gain)}</strong></p>
+        </div>
+      `;
+    }
+
+    function buyStock(productId, input) {
+      if (isComplete()) return;
+
+      const product = productById(productId);
+      const quantity = Number(input.value);
+      if (!Number.isInteger(quantity) || quantity <= 0) {
+        showMessage(elements.runMessage, "Buy a positive whole-number quantity.", "error");
+        return;
+      }
+
+      const cost = toCentsNumber(quantity * product.unitCost);
+      if (cost > run.cash) {
+        showMessage(elements.runMessage, `${quantity} ${product.name} would cost ${money(cost)}, which is more than your available cash.`, "error");
+        return;
+      }
+
+      run.cash = toCentsNumber(run.cash - cost);
+      run.stock[product.id] += quantity;
+      saveRun();
+      input.value = "";
+      showMessage(elements.runMessage, `Bought ${quantity} ${product.name} for ${money(cost)}.`, "ok");
+      render();
+    }
+
+    function updatePrices(event) {
+      const input = event.target;
+      if (!input.matches("[data-price]") || isComplete()) return;
+
+      if (!positiveMoney(input.value)) {
+        showMessage(elements.priceMessage, "Selling prices must be greater than zero.", "error");
+        input.value = run.prices[input.dataset.price].toFixed(2);
+        return;
+      }
+
+      run.prices[input.dataset.price] = toCentsNumber(input.value);
+      saveRun();
+      const product = productById(input.dataset.price);
+      showMessage(elements.priceMessage, `${product.name} price saved at ${money(run.prices[input.dataset.price])}.`, "ok");
+      render();
+    }
+
+    function tradeOneDay() {
+      if (isComplete()) return;
+
+      const rows = catalogue.map((product) => {
+        const price = run.prices[product.id];
+        const demand = demandFor(product, price);
+        const sold = Math.min(demand, run.stock[product.id]);
+        const revenue = toCentsNumber(sold * price);
+        const cost = toCentsNumber(sold * product.unitCost);
+        const profit = toCentsNumber(revenue - cost);
+        return { product: { ...product }, price, demand, sold, revenue, cost, profit };
+      });
+
+      for (const row of rows) {
+        run.stock[row.product.id] -= row.sold;
+        run.cash = toCentsNumber(run.cash + row.revenue);
+      }
+
+      const cashAfter = run.cash;
+      run.history.push({ day: run.currentDay, rows, cashAfter });
+      run.currentDay += 1;
+      saveRun();
+      showMessage(elements.runMessage, `Day ${run.currentDay - 1} completed and saved.`, "ok");
+      render();
+    }
+
+    function replaceRun() {
+      const hasProgress = run.history.length > 0 || run.cash !== INITIAL_CASH || catalogue.some((product) => run.stock[product.id] > 0);
+      if (hasProgress && !window.confirm("Replace the current run? This starts again with €100 cash, zero stock, day one, and empty history.")) {
+        showMessage(elements.runMessage, "Previous run preserved.", "ok");
+        return;
+      }
+
+      run = newRun();
+      saveRun();
+      showMessage(elements.runMessage, "New run started.", "ok");
+      render();
+    }
+
+    elements.catalogue.addEventListener("submit", (event) => {
+      const form = event.target.closest("[data-buy]");
+      if (!form) return;
+      event.preventDefault();
+      buyStock(form.dataset.buy, form.querySelector("input"));
+    });
+
+    elements.priceForm.addEventListener("change", updatePrices);
+    elements.tradeButton.addEventListener("click", tradeOneDay);
+    elements.newRunButton.addEventListener("click", replaceRun);
+
+    saveRun();
+    render();
+  </script>
+</body>
+</html>
